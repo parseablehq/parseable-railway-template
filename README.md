@@ -2,11 +2,11 @@
 
 [![Deploy on Railway](https://railway.com/button.svg)](https://railway.com/deploy?template=TEMPLATE_ID)
 
-[Parseable](https://parseable.com) is an open source, cloud native log analytics platform. Deploy it on [Railway](https://railway.com) in one click with S3-compatible object storage powered by Railway Buckets.
+[Parseable](https://parseable.com) is an open source telemetry data lake. Deploy it on [Railway](https://railway.com) in one click with S3-compatible object storage powered by Railway Buckets.
 
 ## About Hosting Parseable
 
-Parseable is a lightweight, high-performance observability backend for logs, metrics, and traces. It ingests data via a simple REST API and stores it efficiently on S3-compatible object storage. With Parseable on Railway, you get a fully managed deployment with persistent storage, automatic health checks, and zero infrastructure setup. The platform supports standard ingestion protocols including OpenTelemetry, Fluent Bit, and direct HTTP, making it a drop-in backend for any observability pipeline.
+Parseable ingests logs, metrics, and traces via a simple REST API and stores them efficiently on S3-compatible object storage. With Parseable on Railway, you get a fully managed deployment with persistent storage, automatic health checks, and zero infrastructure setup. The platform supports standard ingestion protocols including OpenTelemetry, Fluent Bit, and direct HTTP, making it a drop-in backend for any observability pipeline.
 
 ## Common Use Cases
 
