@@ -1,122 +1,74 @@
-# Parseable on Railway
+# Deploy and Host Parseable with Railway
 
 [![Deploy on Railway](https://railway.com/button.svg)](https://railway.com/deploy?template=TEMPLATE_ID)
 
-Deploy [Parseable](https://parseable.com) on [Railway](https://railway.com) with one click. Parseable is an open source observability platform for logs, metrics, and traces — built for high ingestion, low latency queries, and efficient storage. This template runs Parseable in `s3-store` mode backed by a Railway Bucket for durable, S3-compatible object storage.
+[Parseable](https://parseable.com) is an open source, cloud native log analytics platform. Deploy it on [Railway](https://railway.com) in one click with S3-compatible object storage powered by Railway Buckets.
 
-## What's Included
+## About Hosting Parseable
 
-| Service | Description |
-|---------|-------------|
-| **Parseable** | Observability backend (`parseable/parseable:edge`) running in `s3-store` mode |
-| **Storage** | Railway Bucket providing S3-compatible object storage for log data |
+Parseable is a lightweight, high-performance observability backend for logs, metrics, and traces. It ingests data via a simple REST API and stores it efficiently on S3-compatible object storage. With Parseable on Railway, you get a fully managed deployment with persistent storage, automatic health checks, and zero infrastructure setup. The platform supports standard ingestion protocols including OpenTelemetry, Fluent Bit, and direct HTTP, making it a drop-in backend for any observability pipeline.
 
-A persistent volume is attached at `/parseable/staging` for buffering data before it is flushed to the Railway Bucket.
+## Common Use Cases
 
-## Environment Variables
+- **Centralized log management** — aggregate logs from microservices, serverless functions, and edge workers into a single queryable store
+- **OpenTelemetry backend** — receive logs, metrics, and traces via OTLP from any instrumented application
+- **Security and audit logging** — store immutable event logs with SQL-based querying for compliance and forensics
+- **Development and staging observability** — spin up a lightweight log backend for pre-production environments
+- **Fluent Bit / Fluentd destination** — replace heavyweight log backends with a simple HTTP sink
 
-These are configured automatically by the template. You only need to provide `P_USERNAME` during deploy.
+## Dependencies for Parseable Hosting
 
-| Variable | Value | Description |
-|----------|-------|-------------|
-| `PORT` | `8000` | Service port |
-| `P_ADDR` | `0.0.0.0:${{PORT}}` | Listen address |
-| `P_STAGING_DIR` | `/parseable/staging` | Local staging directory (volume-backed) |
-| `P_USERNAME` | *(you set this)* | Admin username (required) |
-| `P_PASSWORD` | *(auto-generated)* | 32-char admin password |
-| `P_S3_URL` | `${{Storage.ENDPOINT}}` | Railway Bucket endpoint |
-| `P_S3_BUCKET` | `${{Storage.BUCKET}}` | Railway Bucket name |
-| `P_S3_ACCESS_KEY` | `${{Storage.ACCESS_KEY_ID}}` | Railway Bucket access key |
-| `P_S3_SECRET_KEY` | `${{Storage.SECRET_ACCESS_KEY}}` | Railway Bucket secret key |
-| `P_S3_REGION` | `${{Storage.REGION}}` | Railway Bucket region |
-| `P_S3_PATH_STYLE` | `false` | Virtual-hosted-style URLs (Railway default) |
-| `P_CHECK_UPDATE` | `false` | Disable update checks |
-| `P_SEND_ANONYMOUS_USAGE_DATA` | `false` | Disable telemetry |
+- A Railway account (free tier available)
+- Railway Bucket for S3-compatible object storage (provisioned automatically by the template)
 
-## Getting Started
+### Deployment Dependencies
 
-### 1. Deploy
+- [Parseable Docker Image](https://hub.docker.com/r/parseable/parseable) — `parseable/parseable:edge`
+- [Railway Buckets](https://docs.railway.com/reference/buckets) — S3-compatible storage provisioned within Railway
+- [Parseable Documentation](https://www.parseable.com/docs) — configuration reference and API docs
 
-Click the **Deploy on Railway** button above. You'll be prompted to:
-- Set `P_USERNAME` — your Parseable admin username
+### Why Deploy Parseable on Railway?
 
-`P_PASSWORD` is auto-generated. Find it in your Railway service variables after deploy.
+Railway provides one-click deployment with built-in S3-compatible storage via Buckets, persistent volumes, automatic health checks, and public HTTPS URLs. This eliminates the need to provision separate object storage (like AWS S3 or MinIO), configure networking between services, or manage TLS certificates. Railway's template system connects Parseable to a Bucket automatically, so storage credentials are injected at deploy time with zero manual configuration.
 
-### 2. Access the Parseable Console
+### Implementation Details
 
-Once the deployment is healthy, open the public Railway URL for the Parseable service. Log in with:
-- **Username**: the `P_USERNAME` you set
-- **Password**: the `P_PASSWORD` value from your Railway service variables
+Once deployed, your Parseable instance is accessible via the Railway-assigned public URL. Use these curl commands to verify the deployment:
 
-### 3. Ingest Data
-
-Create a log stream and send a test event:
+**Create a log stream:**
 
 ```bash
-# Replace with your Railway public URL, username, and password
-PARSEABLE_URL="https://your-parseable-app.up.railway.app"
-P_USERNAME="your-username"
-P_PASSWORD="your-password"
-
-# Create a log stream
-curl -X PUT "${PARSEABLE_URL}/api/v1/logstream/teststream" \
-  -u "${P_USERNAME}:${P_PASSWORD}"
-
-# Send a log event
-curl -X POST "${PARSEABLE_URL}/api/v1/logstream/teststream" \
-  -u "${P_USERNAME}:${P_PASSWORD}" \
-  -H "Content-Type: application/json" \
-  -H "X-P-Stream: teststream" \
-  -d '[{"message": "Hello from Railway!", "level": "info", "timestamp": "'"$(date -u +%Y-%m-%dT%H:%M:%SZ)"'"}]'
+curl -X PUT "https://your-parseable-app.up.railway.app/api/v1/logstream/teststream" \
+  -u "admin:your-password"
 ```
 
-### 4. Query Data
+**Send a log event:**
 
 ```bash
-curl -X POST "${PARSEABLE_URL}/api/v1/query" \
-  -u "${P_USERNAME}:${P_PASSWORD}" \
+curl -X POST "https://your-parseable-app.up.railway.app/api/v1/logstream/teststream" \
+  -u "admin:your-password" \
+  -H "Content-Type: application/json" \
+  -H "X-P-Stream: teststream" \
+  -d '[{"message": "Hello from Railway!", "level": "info"}]'
+```
+
+**Query logs:**
+
+```bash
+curl -X POST "https://your-parseable-app.up.railway.app/api/v1/query" \
+  -u "admin:your-password" \
   -H "Content-Type: application/json" \
   -d '{"query": "SELECT * FROM teststream", "startTime": "2024-01-01T00:00:00Z", "endTime": "2030-01-01T00:00:00Z"}'
 ```
 
-You can also explore and query data visually from the Parseable console.
+Replace `your-parseable-app.up.railway.app` with your actual Railway URL, and `admin:your-password` with the credentials you configured during deployment. The password is auto-generated and available in your Railway service variables.
 
-## Architecture
+## Further Reading
 
-```
-┌──────────────────────────────────────────────────────┐
-│                      Railway                         │
-│                                                      │
-│  ┌────────────────┐          ┌─────────────────────┐ │
-│  │   Parseable     │───S3───▶│   Railway Bucket     │ │
-│  │   (Docker)      │         │   (Object Storage)   │ │
-│  │   Port 8000     │         │                      │ │
-│  └───────┬────────┘          └──────────────────────┘ │
-│          │                                            │
-│     ┌────┴──────┐                                     │
-│     │  Volume    │                                    │
-│     │ /parseable │                                    │
-│     │ /staging   │                                    │
-│     └───────────┘                                     │
-│                                                       │
-└───────────────────────────────────────────────────────┘
-```
-
-Incoming data is staged to a local volume and periodically flushed to the Railway Bucket over the S3 API.
-
-## Integrations
-
-Parseable supports ingestion from:
-- **OpenTelemetry** — send logs, metrics, and traces via OTLP
-- **Fluent Bit / Fluentd** — forward logs using HTTP output plugin
-- **Vector** — route observability data with the HTTP sink
-- **Any HTTP client** — use the REST API directly
-
-See the [Parseable integrations docs](https://www.parseable.com/docs/integrations) for setup guides.
-
-## Links
-
-- [Parseable Documentation](https://www.parseable.com/docs)
-- [Parseable GitHub](https://github.com/parseablehq/parseable)
-- [Railway Documentation](https://docs.railway.com)
-- [Railway Buckets](https://docs.railway.com/reference/buckets)
+- [Parseable Cloud](https://app.parseable.com) — fully managed Parseable, no infrastructure to maintain
+- [Parseable Documentation](https://www.parseable.com/docs) — configuration, API reference, and guides
+- [Parseable GitHub](https://github.com/parseablehq/parseable) — source code and issue tracker
+- [Parseable Docker Hub](https://hub.docker.com/r/parseable/parseable) — container images
+- [Railway Documentation](https://docs.railway.com) — platform docs
+- [Railway Buckets](https://docs.railway.com/reference/buckets) — S3-compatible storage on Railway
+- [Deploy Parseable on Railway](/docs/self-hosted/installation/standalone/railway) — step-by-step guide in Parseable developer docs
