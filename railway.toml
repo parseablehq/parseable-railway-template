@@ -1,4 +1,0 @@
-[deploy]
-startCommand = "parseable s3-store"
-healthcheckPath = "/api/v1/readiness"
-healthcheckTimeout = 300
