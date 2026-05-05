@@ -1,6 +1,7 @@
 FROM parseable/parseable:edge
 
 ENV P_ADDR=0.0.0.0:8000
+ENV P_STAGING_DIR=/data/staging
 
 EXPOSE 8000
 
