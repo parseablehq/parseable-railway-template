@@ -63,10 +63,6 @@ curl -X POST "https://your-parseable-app.up.railway.app/api/v1/query" \
 
 Replace `your-parseable-app.up.railway.app` with your actual Railway URL, and `admin:your-password` with the credentials you configured during deployment. The password is auto-generated and available in your Railway service variables.
 
-### Upgrades and Restarts
-
-The template attaches a persistent volume at `/data` so Parseable's staging buffer survives restarts. Because Railway does not roll services that have a volume attached, redeploys (including version upgrades) involve a brief period of downtime where ingest requests will fail. Plan upgrades during low-traffic windows or queue logs upstream (e.g. in Fluent Bit's filesystem buffer) to avoid event loss.
-
 ## Further Reading
 
 - [Parseable Cloud](https://app.parseable.com) — fully managed Parseable, no infrastructure to maintain
