@@ -1,5 +1,7 @@
 FROM parseable/parseable:edge
 
+ENV P_ADDR=0.0.0.0:8000
+
 EXPOSE 8000
 
 # Railway injects these env vars via the dashboard template config:
