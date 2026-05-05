@@ -1,10 +1,5 @@
 FROM parseable/parseable:edge
 
-ENV P_ADDR=0.0.0.0:8000
-ENV P_STAGING_DIR=/data/staging
-
-RUN mkdir -p /data/staging && chown -R 10001:10001 /data
-
 EXPOSE 8000
 
 # Railway injects these env vars via the dashboard template config:
