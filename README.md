@@ -20,16 +20,27 @@ Parseable ingests logs, metrics, and traces via a simple REST API and stores the
 
 - A Railway account (free tier available)
 - Railway Bucket for S3-compatible object storage (provisioned automatically by the template)
+- Railway persistent volume mounted at `/data/staging` for Parseable's staging directory (provisioned automatically by the template)
 
 ### Deployment Dependencies
 
 - [Parseable Docker Image](https://hub.docker.com/r/parseable/parseable) — `parseable/parseable:edge`
 - [Railway Buckets](https://docs.railway.com/reference/buckets) — S3-compatible storage provisioned within Railway
+- [Railway Volumes](https://docs.railway.com/reference/volumes) — persistent disk attached to the Parseable service for staging
 - [Parseable Documentation](https://www.parseable.com/docs) — configuration reference and API docs
 
 ### Why Deploy Parseable on Railway?
 
 Railway provides one-click deployment with built-in S3-compatible storage via Buckets, persistent volumes, automatic health checks, and public HTTPS URLs. This eliminates the need to provision separate object storage (like AWS S3 or MinIO), configure networking between services, or manage TLS certificates. Railway's template system connects Parseable to a Bucket automatically, so storage credentials are injected at deploy time with zero manual configuration.
+
+### Storage Layout
+
+Parseable on Railway uses two storage layers, both managed by the platform:
+
+- **Primary storage — Railway Bucket** (S3-compatible). All ingested events are committed here as parquet, manifests, and snapshots. The Bucket is the source of truth and persists across redeploys and image upgrades.
+- **Staging — Railway Volume** mounted at `/data/staging`. Parseable buffers in-flight events here before flushing them to the Bucket. The volume is attached to the Parseable service so the buffer survives container restarts.
+
+Both are provisioned automatically by the template — no manual setup required.
 
 ### Implementation Details
 
