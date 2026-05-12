@@ -1,6 +1,6 @@
 # Deploy and Host Parseable with Railway
 
-[![Deploy on Railway](https://railway.com/button.svg)](https://railway.com/deploy/parseable)
+[![Deploy on Railway](https://railway.com/button.svg)](https://railway.com/deploy/parseable-1)
 
 [Parseable](https://parseable.com) is an open source telemetry data lake. Deploy it on [Railway](https://railway.com) in one click with S3-compatible object storage powered by Railway Buckets.
 

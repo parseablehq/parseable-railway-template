@@ -1,9 +1,9 @@
 FROM parseable/parseable:edge
 
-ENV P_ADDR=0.0.0.0:8000
+ENV P_ADDR=0.0.0.0:8080
 ENV P_STAGING_DIR=/data/staging
 
-EXPOSE 8000
+EXPOSE 8080
 
 # Railway injects these env vars via the dashboard template config:
 #
@@ -17,4 +17,4 @@ EXPOSE 8000
 # User-configured:
 #   P_USERNAME      -> admin username
 #   P_PASSWORD      -> admin password (auto-generated)
-#   PORT            -> 8000 (aligns Railway routing/healthcheck with Parseable's listen port)
+#   PORT            -> 8080 (aligns Railway routing/healthcheck with Parseable's listen port)
